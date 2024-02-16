@@ -1,4 +1,3 @@
-
 import React from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Home from './pages/Home'
@@ -19,7 +18,7 @@ function App() {
         <Route path='/' element={<Home />} />
         <Route path='/about' element={<About />} />
         <Route path='/signup' element={<SignUp />} />
-        <Route path='/signin' element={<Signin />} />
+        <Route path='/sign-in' element={<Signin />} />
         <Route path='/dashboard' element={<Dashboard />} />
         <Route path='/projects' element={<Projects />} />
 
