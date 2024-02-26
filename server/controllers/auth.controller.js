@@ -1,7 +1,7 @@
 const { User } = require('../models/user.model.js')
 const bcryptjs =require( 'bcryptjs');
-const signup=async(req, res)=>{
-    // console.log(req.body)
+const signup=async(req, res,next)=>{
+    console.log(req.body)
     const {username,email,password}=req.body;
 
     if(!username || !email || !password || username===''|| email===""|| password===""){

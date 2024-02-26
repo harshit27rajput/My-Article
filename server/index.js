@@ -15,8 +15,8 @@ mongoose.connect(process.env.MONGO_URL)
 })
 .catch((err)=>console.log(err))
 
-app.listen(3001, (req, res)=>{
-    console.log("server is running on port 3001")
+app.listen(3002, (req, res)=>{
+    console.log("server is running on port 3002")
 })
 
 app.use('/api/user',userRouter)
