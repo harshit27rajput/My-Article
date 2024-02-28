@@ -1,25 +1,28 @@
 import React, { useState } from 'react'
 import { Link,  useNavigate } from 'react-router-dom'
 import { Alert, Button, Label, Spinner, TextInput } from 'flowbite-react'
+import { useDispatch, useSelector} from 'react-redux'
+import { signInFailure,signInStart,signInSuccess } from '../redux/user/userSlice'
 
 function SignUp() {
-  const [loading, setLoading] = useState(false)
-  const [errorMessage, setErrorMessage] = useState(null)
+  const {loading, error:errorMessage}=useSelector((state)=>state.user)
+  const dispatch=useDispatch()
+  // const [loading, setLoading] = useState(false)
+  // const [errorMessage, setErrorMessage] = useState(null)
   const [formData, setFormData] = useState({})
   const navigate = useNavigate()
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() })
   }
 
-  console.log(formData)
+  // console.log(formData)
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.email || !formData.password) {
-      return setErrorMessage("All Fields are Required")
+      return dispatch(signInFailure("All Fields are Required"))
     }
     try {
-      setErrorMessage(null)
-      setLoading(true)
+      dispatch(signInStart())
       
       const res = await fetch('/api/auth/signin', {
         method: 'POST',
@@ -29,15 +32,15 @@ function SignUp() {
       // console.log(res)
       const data = await res.json()
       if (data.success === false) {
-        return setErrorMessage(data.message)
+        return dispatch(signInFailure(data.message))
       }
-      setLoading(false)
+      
       if (res.ok) {
+        dispatch(signInSuccess(data))
         navigate('/')
       }
     } catch (error) {
-      setErrorMessage(error.message)
-      setLoading(false)
+      dispatch(signInFailure(error.message))
     }
 
   }
@@ -62,7 +65,7 @@ function SignUp() {
             </div>
             <div>
               <Label value='Your Password' />
-              <TextInput type='text' placeholder='Password' onChange={handleChange} id='password' />
+              <TextInput type='password' placeholder='Password' onChange={handleChange} id='password' />
             </div>
             <Button gradientDuoTone='purpleToPink' type='submit' disabled={loading}>
               {loading ? (
