@@ -19,7 +19,7 @@ const userSlice = createSlice({
             state.error = null
             state.loading = true
         },
-        signInSuccess: (state, action) => {
+        signInFailure: (state, action) => {
             state.error = null
             state.loading = true
         }
