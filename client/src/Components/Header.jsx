@@ -5,12 +5,29 @@ import { AiOutlineSearch } from 'react-icons/ai'
 import { FaMoon, FaSun } from 'react-icons/fa'
 import { useSelector, useDispatch } from 'react-redux'
 import { toggleTheme } from '../redux/theme/themeSlice';
+import { signoutSuccess } from '../redux/user/userSlice';
 
 function Header() {
     const path = useLocation().pathname
     const {currentUser}=useSelector((s)=>s.user)
     const dispatch=useDispatch()
     const {theme}=useSelector((state)=>state.theme)
+
+    const handleSignout=async () =>{
+        try{
+            const res = await fetch('/api/user/signout',{method:'POST',});
+            const data = await res.json();
+            if(!res.ok){
+                console.log(data.message);
+            }
+            else{
+                dispatch(signoutSuccess());
+            }
+        }
+        catch(error){
+            console.error(error.message)
+        }
+    }
     return (
 
         <Navbar className='border-b-4 py-3'>
@@ -36,9 +53,7 @@ function Header() {
                                 <DropdownItem>Profile</DropdownItem>
                             </Link>
                             <DropdownDivider />
-                            <Link to={'/dashboard?tab=profile'}>
-                                <DropdownItem>Logout</DropdownItem>
-                            </Link>
+                                <DropdownItem onClick={handleSignout} >Logout</DropdownItem>
                         </DropdownHeader>
                     </Dropdown>
                 ):(<Link to='/register'>
