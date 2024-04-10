@@ -7,7 +7,10 @@ const userSchema=new mongoose.Schema({
     profilePicture:{type:String,default:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDtd0soCSRdpo8Y5klekJdABh4emG2P29jwg&usqp=CAU"}
 },
 {
-    timestamps:true, 
+    isAdmin:{
+        type:Boolean,
+        default:false
+    } 
 })
 
 const User= mongoose.model('user',userSchema)

@@ -9,7 +9,6 @@ const signup = async (req, res, next) => {
 
     if (!username || !email || !password || username === '' || email === "" || password === "") {
         return next(errorHandler(400, 'All fields are required'));
-        // return res.status(400).json({msg:"Please fill out all fields"})
     }
     const hashedPassword = bcryptjs.hashSync(password, 10);
     const newUser = new User({
@@ -37,56 +36,56 @@ const signin = async (req, res, next) => {
         if (!isValidPassword) {
             return next(errorHandler(400, 'Invalid Password'))
         }
-        const token = jwt.sign({ id: isValidUser._id }, process.env.JWT_SECURE)
+        const token = jwt.sign({ id: isValidUser._id, isAdmin : isValidUser.isAdmin }, process.env.JWT_SECURE)
         const { password: pass, ...others } = isValidUser._doc
 
-        res
-        .status(200)
-         .cookie('access_token', token, {
-                httpOnly: true
-            })
-     .json(others)
+        res.status(200)
+        .cookie('access_token', token,{
+            httpOnly:true,
+        })
+        .json(others)  
+        }
+        catch(error){
+            next(error)
+        }
     }
-    catch (error) {
-        next(error)
-    }
-}
-
 const google = async (req, res, next) => {
     const { email, name, googlePhotoUrl } = req.body
     try {
         const user = await User.findOne({ email })
         if (user) {
-            const token = jwt.sign({ id: user._id }, process.env.JWT_SECURE)
-            const {password,...rest}=user._doc
+            const token = jwt.sign({ id: user._id, isAdmin:user.isAdmin }, process.env.JWT_SECURE)
+            const {password,...rest}=user._doc;
             res
             .status(200)
-            .cookie("access_token",token,{
+            .cookie('access_token',token,{
                 httpOnly:true,
             })
             .json(rest)
         }
         else{
-            const generatedPassword =Math.random().toString(36).slice(-8)+
+            const generatedPassword =Math.random().toString(36).slice(-8) +
             Math.random().toString(36).slice(-8) 
 
             const hashedPassword=bcryptjs.hashSync(generatedPassword,10)
             const newUser=new User({
-                username:name.toLowerCase().split('').join('')+ Math.random().toString(36).slice(-8),
-                email:email,
+                username:name.toLowerCase().split(' ').join('')+ Math.random().toString(9).slice(-4),
+                email,
                 password:hashedPassword,
                 profilePicture:googlePhotoUrl
             })
-            await newUser.save()
-            const  token=jwt.sign({id: newUser._id}, process.env.JWT_SECURE)
+            await newUser.save();
+            const  token=jwt.sign({id: newUser._id, isAdmin:newUser.isAdmin}, process.env.JWT_SECURE)
             const {password, ...rest}=newUser._doc
             res
             .status(200)
             .cookie('access_token', token, {
-                httpOnly : true})
+                httpOnly : true
+            })
                 .json(rest)
         }
-    } catch (error) {
+    } 
+    catch (error) {
             next(error)
     }
 }
