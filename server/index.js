@@ -4,6 +4,7 @@ const dotenv =require('dotenv')
 const userRouter = require('./routes/user.route.js') 
 const authRouter =require('./routes/auth.route.js')
 const cookieParser = require ('cookie-parser');
+const postRoutes = require ('./routes/post.route.js')
 
 const app=express()
 app.use(express.json())
@@ -22,6 +23,7 @@ app.listen(3002, (req, res)=>{
 
 app.use('/api/user',userRouter)
 app.use('/api/auth',authRouter)
+app.use('/api/post', postRoutes)
 
 app.use((err,req,res,next)=>{
     const statusCode=err.statuscode || 500
