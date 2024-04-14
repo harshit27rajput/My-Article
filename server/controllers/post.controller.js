@@ -29,24 +29,24 @@ const create = async (req, res, next) => {
     }
 }
 
-const getPosts = async (res, res, next)=>{
+const getposts = async (req, res, next)=>{
     try{
-        const startIndex =parseInt(req.query.startIndex) ||0;
+        const startIndex =parseInt(req.query.startIndex) || 0;
         const limit = parseInt(req.query.limit) || 9
-        const sortDirection = req.query.order === 'asc' ? 1:-1
+        const sortDireaction = req.query.order === 'asc' ? 1:-1
         const posts=await Post.find({
             ...(req.query.userId && {userId : req.query.userId}),
             ...(req.query.category && {category : req.query.category}),
-            ...(req.query.slug && {slug : req.query.slug}),
-            ...(req.query.postId && {postId : req.query.postId}),
-            ...(req.query,searchTerm && {
+            ...(req.query.slug && {category : req.query.slug}),
+            ...(req.query.postId && {_Id : req.query.postId}),
+            ...(req.query.searchTerm && {
                 $or: [ 
                     {title: {$regex: req.query.searchTerm, $options: 'i'}},
                     {content: {$regex: req.query.searchTerm, $options: 'i'}},
                 ]
             })
         })
-        .sort({updateAt: sortDireaction})
+        .sort({updatedAt : sortDireaction})
         .skip(startIndex)
         .limit(limit)
         const totalPosts = await Post.countDocuments()
@@ -62,11 +62,11 @@ const getPosts = async (res, res, next)=>{
         res.status(200).json({
             posts,
             totalPosts,
-            lastMonthsPosts,
+            lastMonthPosts,
         });
     }
     catch(error){
         next(error);
     }
 }
-module.exports=create;
+module.exports= {create, getposts};
